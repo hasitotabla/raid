@@ -1,14 +1,14 @@
 export enum RaidType {
-  RAID_0,
-  RAID_1,
-  RAID_1E,
-  RAID_5,
-  RAID_50,
-  RAID_5E,
-  RAID_5EE,
-  RAID_10,
-  RAID_6,
-  RAID_60,
+  RAID0,
+  RAID1,
+  RAID1E,
+  RAID5,
+  RAID50,
+  RAID5E,
+  RAID5EE,
+  RAID10,
+  RAID6,
+  RAID60,
 }
 
 export type RaidHelperResult =
@@ -32,7 +32,7 @@ export type RaidHelper = {
 };
 
 export const raidHelpers: Record<RaidType, RaidHelper> = {
-  [RaidType.RAID_0]: {
+  [RaidType.RAID0]: {
     label: "RAID 0",
     calculate(disks, capacity) {
       return {
@@ -46,27 +46,31 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
       };
     },
   },
-  [RaidType.RAID_1]: {
+  [RaidType.RAID1]: {
     label: "RAID 1",
     calculate(disks, capacity) {
       if (disks < 2) {
-        return { success: false, error: "RAID 1 requires at least 2 disks." };
+        return { success: false, error: "RAID1 should be exactly two drives." };
       }
 
       return {
         success: true,
         data: {
           capacity: capacity,
-          speed: "Fast",
+          speed: `${disks}x read speed, no write speed gain` ,
           faultTolerance: disks - 1,
           extraDetails: "Data is mirrored across all disks. Fault tolerance equals the number of mirrored copies.",
         },
       };
     },
   },
-  [RaidType.RAID_1E]: {
+  [RaidType.RAID1E]: {
     label: "RAID 1E",
     calculate(disks, capacity) {
+      if (disks % 2 === 0) {
+        return { success: false, error: "RAID 1E requires an odd number of drives." };
+      }
+
       if (disks < 3) {
         return { success: false, error: "RAID 1E requires at least 3 disks." };
       }
@@ -75,14 +79,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: Math.floor(disks / 2) * capacity,
-          speed: "Fast",
+          speed: `${disks}x read speed, no write speed gain` ,
           faultTolerance: Math.floor(disks / 2),
           extraDetails: "Data is mirrored and striped. Fault tolerance depends on the mirroring structure.",
         },
       };
     },
   },
-  [RaidType.RAID_5]: {
+  [RaidType.RAID5]: {
     label: "RAID 5",
     calculate(disks, capacity) {
       if (disks < 3) {
@@ -93,14 +97,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: (disks - 1) * capacity,
-          speed: "Fast",
+          speed: `${disks - 1}x read speed, no write speed gain` ,
           faultTolerance: 1,
           extraDetails: "Data is striped with a single parity disk. Fault tolerance is 1 disk failure.",
         },
       };
     },
   },
-  [RaidType.RAID_50]: {
+  [RaidType.RAID50]: {
     label: "RAID 50",
     additionalFields: {
       parity_raid_count: "Number of RAID 5 groups",
@@ -115,6 +119,10 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         return { success: false, error: "Parity RAIDs count must be at least 1." };
       }
 
+      if (disks % parityRaidCount !== 0) {
+        return { success: false, error: "Disks must divide evenly across RAID 5 groups." };
+      }
+
       const groupSize = Math.floor(disks / parityRaidCount);
       if (groupSize < 3) {
         return { success: false, error: "Each RAID 5 group must have at least 3 disks." };
@@ -124,14 +132,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: parityRaidCount * (groupSize - 1) * capacity,
-          speed: "Fast",
+          speed: `${groupSize - 1}x read speed, no write speed gain`,
           faultTolerance: parityRaidCount,
           extraDetails: "Nested RAID with multiple RAID 5 groups.",
         },
       };
     },
   },
-  [RaidType.RAID_5E]: {
+  [RaidType.RAID5E]: {
     label: "RAID 5E",
     calculate(disks, capacity) {
       if (disks < 4) {
@@ -142,14 +150,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: (disks - 1) * capacity,
-          speed: "Fast",
+          speed: `${disks - 1}x read speed, no write speed gain` ,
           faultTolerance: 1,
           extraDetails: "Includes a hot spare disk for faster recovery.",
         },
       };
     },
   },
-  [RaidType.RAID_5EE]: {
+  [RaidType.RAID5EE]: {
     label: "RAID 5EE",
     calculate(disks, capacity) {
       if (disks < 5) {
@@ -160,14 +168,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: (disks - 2) * capacity,
-          speed: "Fast",
+          speed: `${disks - 2}x read speed, no write speed gain` ,
           faultTolerance: 2,
           extraDetails: "Includes distributed hot spares for higher availability.",
         },
       };
     },
   },
-  [RaidType.RAID_10]: {
+  [RaidType.RAID10]: {
     label: "RAID 10",
     calculate(disks, capacity) {
       if (disks < 4 || disks % 2 !== 0) {
@@ -178,14 +186,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: (disks / 2) * capacity,
-          speed: "Fast",
+          speed: `${disks / 2}x read speed, no write speed gain` ,
           faultTolerance: disks / 2,
           extraDetails: "Data is mirrored and striped. Fault tolerance is based on the mirroring setup.",
         },
       };
     },
   },
-  [RaidType.RAID_6]: {
+  [RaidType.RAID6]: {
     label: "RAID 6",
     calculate(disks, capacity) {
       if (disks < 4) {
@@ -196,14 +204,14 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: (disks - 2) * capacity,
-          speed: "Fast",
+          speed: `${disks - 2}x read speed, no write speed gain` ,
           faultTolerance: 2,
           extraDetails: "Data is striped with dual parity, allowing 2 disk failures.",
         },
       };
     },
   },
-  [RaidType.RAID_60]: {
+  [RaidType.RAID60]: {
     label: "RAID 60",
     additionalFields: {
       parity_raid_count: "Number of RAID 6 groups",
@@ -227,7 +235,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
         success: true,
         data: {
           capacity: parityRaidCount * (groupSize - 2) * capacity,
-          speed: "Fast",
+          speed: `${groupSize - 2}x read speed, no write speed gain`,
           faultTolerance: parityRaidCount * 2,
           extraDetails: "Nested RAID with multiple RAID 6 groups.",
         },
