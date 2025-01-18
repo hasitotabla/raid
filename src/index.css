@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#app {
+  background: #080808;
+  color: #ddd;
+}
+
+input {
+  color: #000;
+}
