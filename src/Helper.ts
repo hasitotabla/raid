@@ -1,14 +1,14 @@
 export enum RaidType {
-    RAID_0,
-    RAID_1,
-    RAID_1E,
-    RAID_5,
-    RAID_50,
-    RAID_5E,
-    RAID_5EE,
-    RAID_10,
-    RAID_6,
-    RAID_60,
+    RAID0,
+    RAID1,
+    RAID1E,
+    RAID5,
+    RAID50,
+    RAID5E,
+    RAID5EE,
+    RAID10,
+    RAID6,
+    RAID60,
 
     RAIDZ1,
     RAIDZ2,
@@ -134,7 +134,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
     [RaidType.RAID50]: {
         label: "RAID 50",
         additionalFields: {
-            parity_raid_count: "Number of RAID 5 groups",
+            parityRaidCount: "Number of RAID 5 groups",
         },
         calculate(disks, capacity, fields) {
             if (disks < 6) {
@@ -144,7 +144,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
                 };
             }
 
-            const parityRaidCount = parseInt(fields?.parity_raid_count || "0");
+            const parityRaidCount = parseInt(fields?.parityRaidCount || "0");
             if (parityRaidCount < 1) {
                 return {
                     success: false,
@@ -269,7 +269,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
     [RaidType.RAID60]: {
         label: "RAID 60",
         additionalFields: {
-            parity_raid_count: "Number of RAID 6 groups",
+            parityRaidCount: "Number of RAID 6 groups",
         },
         calculate(disks, capacity, fields) {
             if (disks < 8) {
