@@ -31,8 +31,8 @@ export type AdditionalFields = Record<string, string>;
 
 export type RaidHelper = {
     label: string;
-    titleOverride?: {
-        disks?: string;
+    hidden?: {
+        disks?: boolean;
     };
     additionalFields?: AdditionalFields;
     calculate(
@@ -308,6 +308,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
     },
     [RaidType.RAIDZ1]: {
         label: "RAIDz1 (Single parity)",
+        hidden: { disks: true },
         additionalFields: {
             numOfDriveGroups: "Number of groups",
             numDrivesPerGroup: "Drives per group",
@@ -357,6 +358,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
     },
     [RaidType.RAIDZ2]: {
         label: "RAIDz2 (Double parity)",
+        hidden: { disks: true },
         additionalFields: {
             numOfDriveGroups: "Number of groups",
             numDrivesPerGroup: "Drives per group",
@@ -406,6 +408,7 @@ export const raidHelpers: Record<RaidType, RaidHelper> = {
     },
     [RaidType.RAIDZ3]: {
         label: "RAIDz3 (Triple parity)",
+        hidden: { disks: true },
         additionalFields: {
             numOfDriveGroups: "Number of groups",
             numDrivesPerGroup: "Drives per group",

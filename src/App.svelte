@@ -13,7 +13,11 @@
     let additionalFields = $state<AdditionalFields>({});
 
     const calculated = $derived.by<RaidHelperResult | null>(() => {
-        if (diskCount == null || diskSize === null || raidType === null) {
+        if (
+            (diskCount == null && !selectedRaidHelper?.hidden?.disks) ||
+            diskSize === null ||
+            raidType === null
+        ) {
             return null;
         }
 
@@ -32,7 +36,7 @@
         }
 
         return raidHelpers[raidType].calculate(
-            diskCount,
+            diskCount ?? 0,
             diskSize,
             additionalFields,
         );
@@ -49,17 +53,19 @@
     </h1>
     <div class="w-full flex flex-col lg:flex-row">
         <div class="w-full flex flex-col justify-between items-center lg:w-1/2">
-            <div class="w-full flex justify-between mb-3 items-center">
-                <label for="diskCount">Number of Disks</label>
-                <input
-                    class="w-1/2"
-                    type="number"
-                    id="diskCount"
-                    bind:value={diskCount}
-                    min="1"
-                    max="64"
-                />
-            </div>
+            {#if !selectedRaidHelper?.hidden?.disks}
+                <div class="w-full flex justify-between mb-3 items-center">
+                    <label for="diskCount">Number of Disks</label>
+                    <input
+                        class="w-1/2"
+                        type="number"
+                        id="diskCount"
+                        bind:value={diskCount}
+                        min="1"
+                        max="64"
+                    />
+                </div>
+            {/if}
 
             <div class="w-full flex justify-between mb-3 items-center">
                 <label for="diskSize">Disk Size (TB)</label>
