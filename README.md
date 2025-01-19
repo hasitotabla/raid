@@ -8,7 +8,7 @@ docker build -t raid-calc .
 docker run -d -p 127.0.0.1:8053:80 raid-calc
 ```
 
-<small>or use 127.0.0.1:80:80 to use it locally</small>
+<small>or change it to `127.0.0.1:80:80` to use it locally</small>
 
 ### Caddy Reverse Proxy Config (not required)
 
