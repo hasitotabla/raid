@@ -66,7 +66,6 @@
       {:else if !calculated.success}
         <p>{calculated.error}</p>
       {:else}
-        <!-- {JSON.stringify(calculated.data)} -->
         <p>Total capacity: <span class="text-primary-400">{calculated.data.capacity} TB</span></p>
         <p>Speed gain: <span class="text-primary-400">{calculated.data.speed}</span></p>
         <p>Fault tolerance: <span class="text-primary-400">{calculated.data.faultTolerance}-drive failure</span></p>
